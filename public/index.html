@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>newsharbor - Recent Stories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --card-border: #f1f5f9;
+      --max-width: 1200px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    header { border-bottom: 1px solid var(--border-color); background: #fff; position: sticky; top: 0; z-index: 100; }
+    .nav-container {
+      max-width: var(--max-width); margin: 0 auto; padding: 18px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .logo {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 22px; font-weight: 700; color: #000; text-decoration: none; cursor: pointer;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--text-secondary); font-size: 14px;
+      font-weight: 500; padding-bottom: 4px; cursor: pointer;
+    }
+    .nav-links a.active { color: var(--text-primary); border-bottom: 1.5px solid var(--text-primary); }
+
+    main { max-width: var(--max-width); margin: 0 auto; padding: 56px 24px 80px; min-height: 75vh; }
+    .page-header { text-align: center; margin-bottom: 52px; }
+    .page-header h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .page-header p { font-size: 16px; color: var(--text-secondary); }
+
+    .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .story-card {
+      background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border);
+      transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer; display: flex; flex-direction: column;
+    }
+    .story-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.08); }
+    .story-thumb { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #f1f5f9; }
+    .story-content { padding: 20px 18px 24px; }
+    .story-date { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; display: block; }
+    .story-title { font-size: 22px; font-weight: 800; line-height: 1.32; color: var(--text-primary); letter-spacing: -0.015em; }
+
+    .article-view { max-width: 760px; margin: 0 auto; }
+    .back-btn {
+      font-size: 14px; font-weight: 600; color: var(--text-secondary); background: none;
+      border: none; cursor: pointer; margin-bottom: 24px; padding: 6px 0;
+    }
+    .back-btn:hover { color: var(--text-primary); }
+    .article-header h1 { font-size: 34px; font-weight: 800; line-height: 1.25; margin: 12px 0 24px; }
+    .article-cover { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; margin-bottom: 32px; }
+    .article-body { font-size: 18px; line-height: 1.85; color: #1e293b; }
+    .article-body p { margin-bottom: 22px; }
+
+    .static-page { max-width: 720px; margin: 0 auto; }
+    .static-page h1 { font-size: 32px; font-weight: 800; margin-bottom: 20px; }
+    .static-page p { color: var(--text-secondary); margin-bottom: 16px; }
+    .contact-form { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .contact-form input, .contact-form textarea {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit;
+    }
+    .contact-form button {
+      align-self: flex-start; background: var(--text-primary); color: #fff;
+      border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;
+    }
+    .hidden { display: none; }
+    footer { border-top: 1px solid var(--border-color); text-align: center; padding: 28px 24px; color: var(--text-muted); font-size: 14px; }
+
+    @media (max-width: 992px) { .stories-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) {
+      .stories-grid { grid-template-columns: 1fr; }
+      .nav-container { flex-direction: column; gap: 12px; }
+      .story-title { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <a class="logo" onclick="navigate('blog')">newsharbor</a>
+      <ul class="nav-links">
+        <li><a id="nav-blog" class="active" onclick="navigate('blog')">Blog</a></li>
+        <li><a id="nav-contact" onclick="navigate('contact')">Contact Us</a></li>
+        <li><a id="nav-terms" onclick="navigate('terms')">Terms and Conditions</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section id="view-blog">
+      <div class="page-header">
+        <h1>Recent Stories</h1>
+        <p>Latest updates, analysis, and insights from newsharbor.</p>
+      </div>
+      <div id="stories-grid" class="stories-grid"></div>
+    </section>
+
+    <section id="view-article" class="article-view hidden">
+      <button class="back-btn" onclick="navigate('blog')">← Back to Recent Stories</button>
+      <div class="article-header">
+        <span id="article-date" class="story-date"></span>
+        <h1 id="article-title"></h1>
+      </div>
+      <img id="article-image" class="article-cover" src="" alt="" />
+      <div id="article-body" class="article-body"></div>
+    </section>
+
+    <section id="view-contact" class="static-page hidden">
+      <h1>Contact Us</h1>
+      <p>Have a story tip, question, or feedback? Reach out to the newsharbor team.</p>
+      <form class="contact-form" onsubmit="event.preventDefault(); alert('Message sent!'); this.reset();">
+        <input type="text" placeholder="Your Name" required />
+        <input type="email" placeholder="Your Email" required />
+        <textarea rows="5" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+
+    <section id="view-terms" class="static-page hidden">
+      <h1>Terms and Conditions</h1>
+      <p>Welcome to newsharbor. By accessing or reading stories on this website, you agree to comply with these terms.</p>
+      <p>All stories and articles published on this site are for entertainment and informational purposes.</p>
+    </section>
+  </main>
+
+  <footer>© <span id="year"></span> newsharbor. All rights reserved.</footer>
+
+  <script>
+    let allStories = [];
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    async function loadStories() {
+      const res = await fetch('/api/stories');
+      allStories = await res.json();
+      renderGrid();
+
+      // Kiểm tra nếu người dùng truy cập trực tiếp link /story/:id
+      const match = window.location.pathname.match(/^\/story\/(.+)$/);
+      if (match) {
+        openStory(match[1], false);
+      }
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('stories-grid');
+      grid.innerHTML = '';
+      allStories.forEach((story) => {
+        const card = document.createElement('article');
+        card.className = 'story-card';
+        card.onclick = () => openStory(story.id, true);
+
+        const img = document.createElement('img');
+        img.className = 'story-thumb';
+        img.src = story.image;
+        img.alt = story.title;
+        img.loading = 'lazy';
+
+        const content = document.createElement('div');
+        content.className = 'story-content';
+
+        const date = document.createElement('span');
+        date.className = 'story-date';
+        date.textContent = story.date;
+
+        const title = document.createElement('h2');
+        title.className = 'story-title';
+        title.textContent = story.title;
+
+        content.appendChild(date);
+        content.appendChild(title);
+        card.appendChild(img);
+        card.appendChild(content);
+        grid.appendChild(card);
+      });
+    }
+
+    function openStory(id, pushState = true) {
+      const story = allStories.find((s) => s.id === id);
+      if (!story) return navigate('blog');
+
+      document.getElementById('article-date').textContent = story.date;
+      document.getElementById('article-title').textContent = story.title;
+      document.getElementById('article-image').src = story.image;
+
+      const bodyEl = document.getElementById('article-body');
+      bodyEl.innerHTML = '';
+      story.content.forEach((paragraph) => {
+        const p = document.createElement('p');
+        p.textContent = paragraph;
+        bodyEl.appendChild(p);
+      });
+
+      document.title = `${story.title} - newsharbor`;
+      if (pushState) history.pushState({ page: 'story', id }, '', `/story/${id}`);
+
+      hideAllViews();
+      document.getElementById('view-article').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function navigate(page, pushState = true) {
+      hideAllViews();
+      document.querySelectorAll('.nav-links a').forEach((a) => a.classList.remove('active'));
+
+      if (page === 'blog') {
+        document.getElementById('view-blog').classList.remove('hidden');
+        document.getElementById('nav-blog').classList.add('active');
+        document.title = 'newsharbor - Recent Stories';
+        if (pushState) history.pushState({ page: 'blog' }, '', '/');
+      } else if (page === 'contact') {
+        document.getElementById('view-contact').classList.remove('hidden');
+        document.getElementById('nav-contact').classList.add('active');
+      } else if (page === 'terms') {
+        document.getElementById('view-terms').classList.remove('hidden');
+        document.getElementById('nav-terms').classList.add('active');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideAllViews() {
+      ['view-blog', 'view-article', 'view-contact', 'view-terms'].forEach((id) => {
+        document.getElementById(id).classList.add('hidden');
+      });
+    }
+
+    window.addEventListener('popstate', () => {
+      const match = window.location.pathname.match(/^\/story\/(.+)$/);
+      if (match) openStory(match[1], false);
+      else navigate('blog', false);
+    });
+
+    loadStories();
+  </script>
+</body>
+</html>
